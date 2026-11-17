@@ -30,7 +30,7 @@ jobs:
 
       - name: Run HMM Options Script
         run: |
-          python your_script_name.py  # Replace with your actual Python script filename
+          python hmm_trader.py  # Replace with your actual Python script filename
 
       - name: Commit and Push Updated SQLite Database
         run: |

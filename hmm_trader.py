@@ -420,34 +420,36 @@ def generate_tomorrow_playbook():
     elif signal == "BULL_CALL_DEBIT_SPREAD":
         print(f"  - Suggested Strikes (30 DTE): Buy ${atm_call_strike} Call / Sell ${call_short_strike} Call")
 
-def log_to_csv(current_price, current_rsi, iv_rank, predicted_state, confidence, signal, entry_val):
-    """Logs daily model predictions and signals to a CSV file for GitHub viewing."""
-    file_path = 'sandbox_log.csv'
-    today_str = datetime.now().strftime('%Y-%m-%d')
+    def log_to_csv(current_price, current_rsi, iv_rank, predicted_state, confidence, signal, entry_val):
+        """Logs daily model predictions and signals to a CSV file for GitHub viewing."""
+        file_path = 'sandbox_log.csv'
+        today_str = datetime.now().strftime('%Y-%m-%d')
     
-    new_row = pd.DataFrame([{
-        'date': today_str,
-        'stock_price': current_price,
-        'rsi': current_rsi,
-        'iv_rank': iv_rank,
-        'predicted_state': predicted_state,
-        'confidence': confidence,
-        'signal': signal,
-        'entry_price': entry_val
-    }])
+        new_row = pd.DataFrame([{
+            'date': today_str,
+            'stock_price': current_price,
+            'rsi': current_rsi,
+            'iv_rank': iv_rank,
+            'predicted_state': predicted_state,
+            'confidence': confidence,
+            'signal': signal,
+            'entry_price': entry_val
+        }])
     
-    if os.path.exists(file_path):
-        existing_df = pd.read_csv(file_path)
-        # Drop today's date if it already exists to avoid duplicate entries on reruns
-        existing_df = existing_df[existing_df['date'] != today_str]
-        updated_df = pd.concat([existing_df, new_row], ignore_index=True)
-    else:
-        updated_df = new_row
+        if os.path.exists(file_path):
+            existing_df = pd.read_csv(file_path)
+            # Drop today's date if it already exists to avoid duplicate entries on reruns
+            existing_df = existing_df[existing_df['date'] != today_str]
+            updated_df = pd.concat([existing_df, new_row], ignore_index=True)
+        else:
+            updated_df = new_row
         
-    updated_df.to_csv(file_path, index=False)
-    print(f"[*] Successfully logged today's run ({today_str}) to {file_path}")
+        updated_df.to_csv(file_path, index=False)
+        print(f"[*] Successfully logged today's run ({today_str}) to {file_path}")
+        
+    
 
-log_to_csv(current_price, current_rsi, live_iv_rank, predicted_state, confidence, signal, entry_val)
+    log_to_csv(current_price, current_rsi, live_iv_rank, predicted_state, confidence, signal, entry_val)
     
 generate_tomorrow_playbook()
 

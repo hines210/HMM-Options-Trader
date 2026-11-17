@@ -1,4 +1,3 @@
-!pip install hmmlearn yfinance
 
 import numpy as np
 import pandas as pd

@@ -448,4 +448,6 @@ def log_to_database(current_price, current_rsi, iv_rank, predicted_state, confid
     conn.commit()
     conn.close()
     print(f"[*] Successfully logged today's run ({today_str}) to hmm_sandbox.db")
+    
 generate_tomorrow_playbook()
+log_to_database(current_price, current_rsi, live_iv_rank, predicted_state, confidence, signal, entry_val)

@@ -417,5 +417,35 @@ def generate_tomorrow_playbook():
         print(f"  - Suggested Strikes (30 DTE): Put Spread [${put_short_strike}/${put_long_strike}] & Call Spread [${call_short_strike}/${call_long_strike}]")
     elif signal == "BULL_CALL_DEBIT_SPREAD":
         print(f"  - Suggested Strikes (30 DTE): Buy ${atm_call_strike} Call / Sell ${call_short_strike} Call")
+import sqlite3
+from datetime import datetime
 
+def log_to_database(current_price, current_rsi, iv_rank, predicted_state, confidence, signal, entry_val):
+    """Logs daily model predictions and signals to a local SQLite database."""
+    conn = sqlite3.connect('hmm_sandbox.db')
+    cursor = conn.cursor()
+    
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS sandbox_log (
+            date TEXT PRIMARY KEY,
+            stock_price REAL,
+            rsi REAL,
+            iv_rank REAL,
+            predicted_state INTEGER,
+            confidence REAL,
+            signal TEXT,
+            entry_price REAL
+        )
+    ''')
+    
+    today_str = datetime.now().strftime('%Y-%m-%d')
+    
+    cursor.execute('''
+        INSERT OR REPLACE INTO sandbox_log (date, stock_price, rsi, iv_rank, predicted_state, confidence, signal, entry_price)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    ''', (today_str, current_price, current_rsi, iv_rank, predicted_state, confidence, signal, entry_val))
+    
+    conn.commit()
+    conn.close()
+    print(f"[*] Successfully logged today's run ({today_str}) to hmm_sandbox.db")
 generate_tomorrow_playbook()
